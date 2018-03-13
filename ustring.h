@@ -76,9 +76,19 @@ namespace maxy
 					return *this;
 				}
 
-				int operator*()
+				int operator*() const
 				{
 					return str.decode_char (byte_ptr);
+				}
+
+				bool operator==(const char_iterator & ci) const
+				{
+					return str == ci.str && char_ptr == ci.char_ptr && ci.byte_ptr == ci.byte_ptr;
+				}
+
+				bool operator==(const char_iterator & ci) const
+				{
+					return !(*this == ci);
 				}
 			};
 
@@ -92,6 +102,58 @@ namespace maxy
 				return char_iterator{*this, char_size(), size()}; 
 			}
 
+
+			class char_reverse_iterator
+			{
+				ustring & str;
+				size_t char_ptr;
+				size_t byte_ptr;
+				
+				public:
+				
+				char_reverse_iterator (ustring & s, size_t cp = 0, size_t bp = 0) : str{s}, char_ptr{cp}, byte_ptr{bp} {};
+
+				char_reverse_iterator & operator--()
+				{
+					if (byte_ptr >= str.size ()) return *this;
+					char_ptr++;
+					byte_ptr = str.next_char (byte_ptr);
+					return *this;
+				}
+
+				char_reverse_iterator & operator++()
+				{
+					if (!byte_ptr) return *this;
+					char_ptr--;
+					byte_ptr = str.prev_char (byte_ptr);
+					return *this;
+				}
+
+				int operator*()
+				{
+					return str.decode_char (byte_ptr);
+				}
+
+				bool operator==(const char_reverse_iterator & ci) const
+				{
+					return str == ci.str && char_ptr == ci.char_ptr && ci.byte_ptr == ci.byte_ptr;
+				}
+
+				bool operator==(const char_reverse_iterator & ci) const
+				{
+					return !(*this == ci);
+				}
+			};
+
+			char_reverse_iterator char_rend ()
+			{
+				return char_reverse_iterator{*this};
+			}
+
+			char_reverse_iterator char_rbegin ()
+			{
+				return char_iterator{*this, char_size(), size()}; 
+			}
 		};
 	}
 }
