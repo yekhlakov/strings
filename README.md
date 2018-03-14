@@ -11,3 +11,4 @@ Unsorted string-related stuff. Most notably, converters from utf-8 to wchar_t an
 ## sprintf.h
 
 (Almost) type-safe, template versions of sprintf and fprintf.
+This now requires `traits.h` from https://github.com/yekhlakov/traits.git
