@@ -62,7 +62,7 @@ namespace maxy
 			return os.str ();
 		}
 
-		std::string	wchartoutf8 (const std::wstring & in)
+		std::string wchartoutf8 (const std::wstring & in)
 		{
 			std::ostringstream os;
 			for (auto c : in) emit_char (os, c);

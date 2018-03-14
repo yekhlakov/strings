@@ -40,7 +40,7 @@ namespace maxy
 			size_t prev_char (size_t byte_ptr, size_t count = 1) const;
 
 			// erase given number of utf-8 characters starting from the given one
-			void erase_chars (size_t char_ptr, size_t count = 1);
+			ustring & char_erase (size_t char_ptr = 0, size_t count = npos);
 
 			// size of string in utf-8 characters
 			size_t char_size () const;
@@ -57,10 +57,10 @@ namespace maxy
 				size_t byte_ptr;
 				
 				public:
-				
+				char_iterator (const char_iterator & ci) = default;
 				char_iterator (ustring & s, size_t cp = 0, size_t bp = 0) : str{s}, char_ptr{cp}, byte_ptr{bp} {};
 
-				char_iterator & operator++()
+				char_iterator & operator++ ()
 				{
 					if (byte_ptr >= str.size ()) return *this;
 					char_ptr++;
@@ -68,7 +68,7 @@ namespace maxy
 					return *this;
 				}
 
-				char_iterator & operator--()
+				char_iterator & operator-- ()
 				{
 					if (!byte_ptr) return *this;
 					char_ptr--;
@@ -76,17 +76,31 @@ namespace maxy
 					return *this;
 				}
 
-				int operator*() const
+				char_iterator operator++ (int)
+				{
+					auto temp = *this;
+					++(*this);
+					return temp;
+				}
+
+				char_iterator operator-- (int)
+				{
+					auto temp = *this;
+					--(*this);
+					return temp;
+				}
+
+				int operator* () const
 				{
 					return str.decode_char (byte_ptr);
 				}
 
-				bool operator==(const char_iterator & ci) const
+				bool operator== (const char_iterator & ci) const
 				{
 					return str == ci.str && char_ptr == ci.char_ptr && ci.byte_ptr == ci.byte_ptr;
 				}
 
-				bool operator==(const char_iterator & ci) const
+				bool operator!= (const char_iterator & ci) const
 				{
 					return !(*this == ci);
 				}
@@ -102,7 +116,6 @@ namespace maxy
 				return char_iterator{*this, char_size(), size()}; 
 			}
 
-
 			class char_reverse_iterator
 			{
 				ustring & str;
@@ -110,10 +123,10 @@ namespace maxy
 				size_t byte_ptr;
 				
 				public:
-				
+				char_reverse_iterator (const char_reverse_iterator & cri) = default;
 				char_reverse_iterator (ustring & s, size_t cp = 0, size_t bp = 0) : str{s}, char_ptr{cp}, byte_ptr{bp} {};
 
-				char_reverse_iterator & operator--()
+				char_reverse_iterator & operator-- ()
 				{
 					if (byte_ptr >= str.size ()) return *this;
 					char_ptr++;
@@ -121,7 +134,7 @@ namespace maxy
 					return *this;
 				}
 
-				char_reverse_iterator & operator++()
+				char_reverse_iterator & operator++ ()
 				{
 					if (!byte_ptr) return *this;
 					char_ptr--;
@@ -129,17 +142,31 @@ namespace maxy
 					return *this;
 				}
 
-				int operator*()
+				char_reverse_iterator operator++ (int)
+				{
+					auto temp = *this;
+					++(*this);
+					return temp;
+				}
+
+				char_reverse_iterator operator-- (int)
+				{
+					auto temp = *this;
+					--(*this);
+					return temp;
+				}
+
+				int operator* ()
 				{
 					return str.decode_char (byte_ptr);
 				}
 
-				bool operator==(const char_reverse_iterator & ci) const
+				bool operator== (const char_reverse_iterator & ci) const
 				{
 					return str == ci.str && char_ptr == ci.char_ptr && ci.byte_ptr == ci.byte_ptr;
 				}
 
-				bool operator==(const char_reverse_iterator & ci) const
+				bool operator!= (const char_reverse_iterator & ci) const
 				{
 					return !(*this == ci);
 				}
@@ -152,7 +179,7 @@ namespace maxy
 
 			char_reverse_iterator char_rbegin ()
 			{
-				return char_iterator{*this, char_size(), size()}; 
+				return char_reverse_iterator{*this, char_size(), size()}; 
 			}
 		};
 	}

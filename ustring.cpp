@@ -99,11 +99,18 @@ namespace maxy
 			return byte_ptr;
 		}
 
-		void ustring::erase_chars (size_t char_ptr, size_t count)
+		ustring & ustring::char_erase (size_t char_ptr, size_t count)
 		{
 			auto byte_ptr = next_char (0, char_ptr);
+			if (count == npos)
+			{
+				erase (byte_ptr);
+				return *this;
+			}
+
 			auto next = next_char (byte_ptr, count);
 			erase (byte_ptr, next - byte_ptr);
+			return *this;
 		}
 
 		int ustring::operator() (size_t char_ptr) const
