@@ -156,7 +156,8 @@ namespace maxy
 		* Print and append to existing string - (kinda) specialization for no data arguments.
 		* Beware, this will just emit any format specifiers as is
 		*/
-		inline size_t osprintf (std::ostream & out, const char * format)
+		template<typename T = void>
+		size_t osprintf (std::ostream & out, const char * format)
 		{
 			std::string x{format};
 			out << x;
