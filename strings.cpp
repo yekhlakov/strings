@@ -5,7 +5,10 @@ namespace maxy
 {
 	namespace strings
 	{
-		void emit_char (std::ostringstream &os, int c)
+		/**
+		 * Output a (utf8 encoded) unicode character to a stream
+		 */
+		void emit_char (std::ostream &os, int c)
 		{
 			if (c < 128)
 				os << (char) c;
@@ -22,6 +25,9 @@ namespace maxy
 				   << (char) (((c & 0x003f)) | 0x80);
 		}
 
+		/**
+		 * Convert utf8 encoded char string into wchar_t string
+		 */
 		std::wstring utf8towchar (const std::string & in)
 		{
 			std::wostringstream os;
@@ -62,6 +68,9 @@ namespace maxy
 			return os.str ();
 		}
 
+		/**
+		 * Convert wchar_t string to utf8 encoded char string
+		 */
 		std::string wchartoutf8 (const std::wstring & in)
 		{
 			std::ostringstream os;
@@ -69,9 +78,12 @@ namespace maxy
 			return os.str ();
 		}
 
-		std::pair<std::string, std::string> eq_split (const std::string & in)
+		/**
+		 * Split string in two with = as separator
+		 */
+		std::pair<std::string, std::string> eq_split (const std::string & in, char sep = '=')
 		{
-			auto ptr = in.find_first_of ('=');
+			auto ptr = in.find_first_of (sep);
 			if (ptr == std::string::npos) return std::make_pair<> (in, std::string{});
 
 			return std::make_pair<> 
@@ -79,6 +91,75 @@ namespace maxy
 				std::string{in.cbegin (),in.cbegin () + ptr}, 
 				std::string{in.cbegin () + ptr + 1, in.cend ()}
 			);
+		}
+
+		/**
+		 * Check if the string contains integer
+		 */
+		bool is_int (const std::string & s)
+		{
+			bool has_sign = s[0] == '+' || s[0] == '-';
+			for (char c : s)
+			{
+				if ((c == '+' || c == '-') && has_sign) return false;
+				if (c < '0' || c > '9') return false;
+			}
+			return true;
+		}
+
+		/**
+		 * Check if the string contains float
+		 */
+		bool is_float (const std::string & s)
+		{
+			bool has_sign = s[0] == '+' || s[0] == '-',
+				has_point = false, has_exp = false, has_exp_sign = false;
+
+			size_t p = has_sign ? 1 : 0;
+
+			if (p >= s.size ()) return false;
+
+			for (; p < s.size (); p++)
+			{
+				char c = s[p];
+				if ((c == '+' || c == '-') && has_sign) return false;
+				if (c == '.')
+				{
+					if (has_point) return false;
+					has_point = true;
+				}
+				else if (c == 'e' || c == 'E')
+				{
+					has_exp = true;
+					break;
+				}
+				else if (c < '0' || c > '9')
+				{
+					return false;
+				}
+			}
+
+			if (!has_exp) return true;
+
+			p++;
+
+			if (p >= s.size ()) return false;
+
+			if (s[p] == '+' || s[p] == '-') has_exp_sign = true;
+			p++;
+			if (p >= s.size ()) return false;
+
+			for (; p < s.size (); p++)
+			{
+				if (s[p] < '0' || s[p] > '9') return false;
+			}
+			return true;
+		}
+
+		// Check if the string is a representation of a number
+		bool is_numeric (const std::string & s) 
+		{ 
+			return is_int (s) || is_float (s); 
 		}
 	}
 }
